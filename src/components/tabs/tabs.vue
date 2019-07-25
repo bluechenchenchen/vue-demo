@@ -15,6 +15,12 @@ export default {
       currentName: this.activeName
     };
   },
+  watch: {
+    'this.$slots.default': function(val) {
+      // eslint-disable-next-line no-console
+      console.log(val)
+    }
+  },
   methods: {
     handleTabClick(ev, tabName) {
       this.currentName = tabName;
@@ -22,6 +28,8 @@ export default {
     },
     calcPaneInstances() {
       if (this.$slots.default) {
+        // eslint-disable-next-line no-console
+        console.log('calcPaneInstances')
         const panes = this.$slots.default.map(item => {
           return {
             label:
@@ -30,6 +38,8 @@ export default {
           };
         });
         this.panes = panes;
+        // eslint-disable-next-line no-console
+        console.log(this.$slots.default)
       }
     }
   },
