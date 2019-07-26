@@ -6,6 +6,8 @@
 
 <script>
 export default {
+  name: "TabPane",
+  componentName: "TabPane",
   props: {
     label: String,
     name: String

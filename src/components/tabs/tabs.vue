@@ -4,22 +4,10 @@
 <script>
 import TabNav from "./tab-nav";
 export default {
-  components: {
-    TabNav
-  },
-  props: {
-    activeName: String
-  },
+  components: { TabNav },
+  props: { activeName: String },
   data() {
-    return {
-      currentName: this.activeName
-    };
-  },
-  watch: {
-    'this.$slots.default': function(val) {
-      // eslint-disable-next-line no-console
-      console.log(val)
-    }
+    return { currentName: this.activeName, panes: [] };
   },
   methods: {
     handleTabClick(ev, tabName) {
@@ -28,18 +16,25 @@ export default {
     },
     calcPaneInstances() {
       if (this.$slots.default) {
-        // eslint-disable-next-line no-console
-        console.log('calcPaneInstances')
-        const panes = this.$slots.default.map(item => {
-          return {
-            label:
-             item.componentOptions.propsData.label ||item.data.attrs.label,
-            name:item.componentOptions.propsData.name ||item.data.attrs.name
-          };
-        });
-        this.panes = panes;
-        // eslint-disable-next-line no-console
-        console.log(this.$slots.default)
+        const paneSlots = this.$slots.default.filter(
+          vnode =>
+            vnode.tag &&
+            vnode.componentOptions &&
+            vnode.componentOptions.Ctor.options.name === "TabPane"
+        );
+        const panes = paneSlots.map(
+          ({ componentInstance }) => componentInstance
+        );
+        const panesChanged = !(
+          panes.length === this.panes.length &&
+          panes.every((pane, index) => pane === this.panes[index])
+        );
+        if (panesChanged) {
+          this.panes = panes;
+        }
+        // this.panes = panes;
+      } else if (this.panes.length !== 0) {
+        this.panes = [];
       }
     }
   },
@@ -60,19 +55,16 @@ export default {
     );
   },
   created() {
-    this.calcPaneInstances();
-    // eslint-disable-next-line no-console
-    console.log('created')
+    // this.$on("tab-nav-update", this.calcPaneInstances.bind(null, true));
   },
   mounted() {
     this.calcPaneInstances();
-    // eslint-disable-next-line no-console
-    console.log('mounted')
   },
+
   updated() {
     this.calcPaneInstances();
     // eslint-disable-next-line no-console
-    console.log('updated')
+    console.log("updated")
   }
 };
 </script>
